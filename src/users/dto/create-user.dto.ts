@@ -10,13 +10,14 @@ export class CreateUserDto {
     @MinLength(3, { message: 'El nombre debe tener minimo 3 letras' })
     readonly name: string;
     readonly lastName: string;
-    @Validate(UniqueEmailValidator, { message: 'El correo ya fue registrado' })
     @IsNotEmpty()
     @IsEmail({}, { message: 'El correo no tiene uno formato válido' })
+    @Validate(UniqueEmailValidator, { message: 'El correo ya fue registrado' })
     readonly email: string;
     @IsNotEmpty()
     @IsString()
-    @Matches(/^[^s@]+@[^s@]+.[^s@]+$/,{message:'La contraseña debe tener al menos 8 Caracteres'})
+    @Matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/,{message:'La contraseña debe tener al menos 8 Caracteres, como mínimo una letra mayúscula, una letra minúscula, un número y un carácter especial'})
     readonly password: string;
+    @IsNotEmpty()
     readonly avatar: string;
 }

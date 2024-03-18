@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { User } from './users.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -20,15 +20,15 @@ export class UsersService {
     }
 
     async findAll(): Promise<User[]> {
-        try {
-            return await this.userModel.find().exec();
-        } catch (error) {
-            throw new NotFoundException('No se encontraron usuarios');
-        }
+        return await this.userModel.find().exec();
     }
 
     async findOne(id: string): Promise<User> {
-        return this.userModel.findById(id);
+        try {
+            return await this.userModel.findById(id);
+        } catch (error) {
+            throw new HttpException('NotFound', HttpStatus.NOT_FOUND);
+        }
     }
 
     async update(id: string, userDto: CreateUserDto): Promise<User> {
@@ -59,7 +59,7 @@ export class UsersService {
     }
 
     async findByEmail(email: string): Promise<User> {
-        return this.userModel.findOne({email})
+        return  this.userModel.where({ email }).findOne();
     }
-                   
+
 }
